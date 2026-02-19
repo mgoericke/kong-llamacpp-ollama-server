@@ -38,7 +38,7 @@ start_vision() {
         --ctx-size      16384 \
         --n-gpu-layers  99 \
         --tensor-split  1,1 \
-        --flash-attn \
+        --flash-attn on \
         --parallel      4 \
         > "$LOG_DIR/vision.log" 2>&1 &
 
