@@ -50,6 +50,7 @@ services:
       WEBUI_NAME:           "LLM Gateway"
       DEFAULT_LOCALE:       "de-DE"
       ENABLE_SIGNUP:        "false"   # Auf true setzen wenn Mehrbenutzer gewünscht
+      WEBUI_AUTH:           "false"   # Auf true setzen für Authentifizierung (z.B. mit LDAP)
       ANONYMIZED_TELEMETRY: "false"
       DO_NOT_TRACK:         "true"
 
