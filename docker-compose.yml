@@ -1,0 +1,68 @@
+services:
+
+  # ── Kong API Gateway ──────────────────────────────────────────────────────
+  kong:
+    image: kong:3.9
+    container_name: kong-gateway
+    environment:
+      KONG_DATABASE:            "off"
+      KONG_DECLARATIVE_CONFIG:  /etc/kong/kong.yaml
+      KONG_PROXY_ACCESS_LOG:    /dev/stdout
+      KONG_ADMIN_ACCESS_LOG:    /dev/stdout
+      KONG_PROXY_ERROR_LOG:     /dev/stderr
+      KONG_ADMIN_ERROR_LOG:     /dev/stderr
+      KONG_ADMIN_LISTEN:        0.0.0.0:8001
+      KONG_PROXY_LISTEN:        0.0.0.0:8000
+    volumes:
+      - ./kong.yaml:/etc/kong/kong.yaml:ro
+    ports:
+      - "8000:8000"   # Proxy  → externer Zugriff auf alle LLM-Services
+      - "8001:8001"   # Admin API
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Open WebUI ────────────────────────────────────────────────────────────
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    environment:
+      # Ollama (läuft direkt auf dem Host)
+      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+
+      # llama.cpp Server via Kong (OpenAI-kompatibel)
+      # Mehrere Endpunkte: semikolon-separiert
+      OPENAI_API_BASE_URLS: >-
+        http://kong:8000/chat;http://kong:8000/embed
+      OPENAI_API_KEYS: "dummy;dummy"
+
+      # Anzeigenamen in der WebUI
+      OPENAI_API_CONFIGS: >-
+        {"http://kong:8000/chat": {"name": "Qwen2.5-VL 32B (Chat+Vision)"},
+         "http://kong:8000/embed": {"name": "BGE-M3 Embedding"}}
+
+      # Allgemein
+      WEBUI_NAME:           "LLM Gateway"
+      DEFAULT_LOCALE:       "de-DE"
+      ENABLE_SIGNUP:        "false"   # Auf true setzen wenn Mehrbenutzer gewünscht
+      ANONYMIZED_TELEMETRY: "false"
+      DO_NOT_TRACK:         "true"
+
+    volumes:
+      - open-webui-data:/app/backend/data
+    ports:
+      - "3000:8080"   # WebUI erreichbar unter http://localhost:3000
+    depends_on:
+      kong:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  open-webui-data:

@@ -1,0 +1,51 @@
+_format_version: "3.0"
+
+services:
+
+  # ── Qwen2.5-VL 32B: Chat + Vision (unified) ──────────────────────────────
+  - name: llm-chat-vision
+    url: http://host.docker.internal:8081
+    routes:
+      - name: chat-vision-route
+        paths:
+          - /chat
+        strip_path: true
+
+  # ── BGE-M3 Embedding ──────────────────────────────────────────────────────
+  - name: llm-embedding
+    url: http://host.docker.internal:8083
+    routes:
+      - name: embedding-route
+        paths:
+          - /embed
+        strip_path: true
+
+  # ── Ollama ────────────────────────────────────────────────────────────────
+  - name: ollama
+    url: http://host.docker.internal:11434
+    routes:
+      - name: ollama-route
+        paths:
+          - /ollama
+        strip_path: true
+
+plugins:
+
+  # Rate Limiting (global)
+  - name: rate-limiting
+    config:
+      minute: 120
+      policy: local
+
+  # CORS für Browser-Zugriff (Open WebUI + externe Clients)
+  - name: cors
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - OPTIONS
+      headers:
+        - Content-Type
+        - Authorization
