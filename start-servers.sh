@@ -6,7 +6,7 @@ MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 LOG_DIR="${LOG_DIR:-$HOME/logs}"
 
 # Modell-Dateinamen
-VISION_MODEL="Qwen2.5-VL-32B-Instruct-Q4_K_M.gguf"
+VISION_MODEL="Qwen_Qwen2.5-VL-32B-Instruct-Q4_K_M.gguf"
 VISION_MMPROJ="Qwen2.5-VL-32B-Instruct-mmproj-f16.gguf"
 EMBED_MODEL="bge-m3-Q8_0.gguf"
 

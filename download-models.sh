@@ -12,14 +12,16 @@ echo "Hinweis: Qwen2.5-VL-32B benötigt ~20 GB Speicherplatz."
 echo ""
 
 # 1. Qwen2.5-VL 32B Vision (unified Chat + Vision)
+# Quelle: bartowski (Repo-Name enthält Underscore!)
 echo "[1/3] Qwen2.5-VL 32B Instruct Q4_K_M (~20 GB) ..."
-hf download bartowski/Qwen2.5-VL-32B-Instruct-GGUF \
-    Qwen2.5-VL-32B-Instruct-Q4_K_M.gguf \
+hf download bartowski/Qwen_Qwen2.5-VL-32B-Instruct-GGUF \
+    Qwen_Qwen2.5-VL-32B-Instruct-Q4_K_M.gguf \
     --local-dir .
 
 # 2. Vision Projector für 32B VL-Modell
+# Quelle: Mungert (einzige zuverlässige Quelle für 32B mmproj)
 echo "[2/3] Vision Projector 32B (~1.5 GB) ..."
-hf download bartowski/Qwen2.5-VL-32B-Instruct-GGUF \
+hf download Mungert/Qwen2.5-VL-32B-Instruct-GGUF \
     Qwen2.5-VL-32B-Instruct-mmproj-f16.gguf \
     --local-dir .
 
